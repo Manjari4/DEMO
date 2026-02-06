@@ -1,10 +1,7 @@
 pipeline {
     agent any
 
-    options {
-        timestamps()
-        disableConcurrentBuilds()
-    }
+   
 
     parameters {
         choice(
@@ -19,6 +16,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -35,8 +33,8 @@ pipeline {
                     echo "Inventory   : ${inventory}"
                     echo "Playbook    : ${playbook}"
 
-                    sh """
-                        ansible-playbook \
+                    bat """
+                        wsl ansible-playbook \
                           -i ${inventory} \
                           ${playbook}
                     """
