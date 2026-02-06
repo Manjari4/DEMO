@@ -1,5 +1,11 @@
 pipeline {
     agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
     environment {
         ANSIBLE_HOST_KEY_CHECKING = 'False'
     }
@@ -15,15 +21,15 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 script {
-                    def inventory = "inventory/inven.ini"
-                    def playbook = "playbooks/checks.yaml"
+                    def inventory = "Ansible/Inventory/inventory.ini"
+                    def playbook  = "Ansible/Playbooks/checks.yaml"
 
-                    echo "Inventory   : ${inventory}"
-                    echo "Playbook    : ${playbook}"
+                    echo "Inventory : ${inventory}"
+                    echo "Playbook  : ${playbook}"
 
                     bat """
-                        wsl ansible-playbook \
-                          -i ${inventory} \
+                        wsl ansible-playbook ^
+                          -i ${inventory} ^
                           ${playbook}
                     """
                 }
@@ -33,13 +39,11 @@ pipeline {
 
     post {
         success {
-            echo "✅ MySQL installed and running successfully"
+            echo "✅ Ansible playbook ran successfully"
         }
-
         failure {
-            echo "❌ MySQL install or health check failed"
+            echo "❌ Ansible playbook failed"
         }
-
         always {
             cleanWs()
         }
