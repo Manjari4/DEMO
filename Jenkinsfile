@@ -27,11 +27,11 @@ pipeline {
                     echo "Inventory : ${inventory}"
                     echo "Playbook  : ${playbook}"
 
-                    bat """
-                        wsl ansible-playbook ^
-                          -i ${inventory} ^
-                          ${playbook}
-                    """
+                     bat """
+                        wsl bash -lc "ansible-playbook \
+                          -i Ansible/Inventory/inventory.ini \
+                           Ansible/Playbooks/checks.yaml"
+                     """
                 }
             }
         }
