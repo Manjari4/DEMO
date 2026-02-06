@@ -1,16 +1,5 @@
 pipeline {
     agent any
-
-   
-
-    parameters {
-        choice(
-            name: 'ENVIRONMENT',
-            choices: ['dev', 'test'],
-            description: 'Target environment'
-        )
-    }
-
     environment {
         ANSIBLE_HOST_KEY_CHECKING = 'False'
     }
@@ -26,10 +15,9 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 script {
-                    def inventory = "inventory/${params.ENVIRONMENT}.ini"
-                    def playbook = "playbooks/mysql_check.yml"
+                    def inventory = "inventory/inven.ini"
+                    def playbook = "playbooks/checks.yml"
 
-                    echo "Environment : ${params.ENVIRONMENT}"
                     echo "Inventory   : ${inventory}"
                     echo "Playbook    : ${playbook}"
 
