@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     def inventory = "inventory/inven.ini"
-                    def playbook = "playbooks/checks.yml"
+                    def playbook = "playbooks/checks.yaml"
 
                     echo "Inventory   : ${inventory}"
                     echo "Playbook    : ${playbook}"
