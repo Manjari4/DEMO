@@ -1,0 +1,27 @@
+---
+- name: Install, start and check MySQL service
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install MySQL
+      package:
+        name: mysql-server
+        state: present
+
+    - name: Ensure MySQL service is started and enabled
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Check MySQL service status
+      service_facts:
+
+    - name: Assert MySQL service is running
+      assert:
+        that:
+          - "'mysql.service' in ansible_facts.services"
+          - ansible_facts.services['mysql.service'].state == 'running'
+        fail_msg: "MySQL service is NOT running."
+        success_msg: "MySQL service is running."
