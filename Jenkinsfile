@@ -1,18 +1,8 @@
 pipeline {
     agent any
 
-    options {
-        timestamps()
-        disableConcurrentBuilds()
-    }
-
-    environment {
-        ANSIBLE_HOST_KEY_CHECKING = 'False'
-    }
-
     stages {
-
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
@@ -20,32 +10,21 @@ pipeline {
 
         stage('Run Ansible Playbook') {
             steps {
-                script {
-                    def inventory = "Ansible/Inventory/inventory.ini"
-                    def playbook  = "Ansible/Playbooks/checks.yaml"
-
-                    echo "Inventory : ${inventory}"
-                    echo "Playbook  : ${playbook}"
-
-                     bat """
-                        wsl bash -lc "ansible-playbook \
-                          -i Ansible/Inventory/inventory.ini \
-                           Ansible/Playbooks/checks.yaml"
-                     """
-                }
+                sh '''
+                    ansible-playbook \
+                    -i Ansible/Inventory/inventory.ini \
+                    Ansible/Playbooks/checks.yaml
+                '''
             }
         }
     }
 
     post {
         success {
-            echo "✅ Ansible playbook ran successfully"
+            echo '✅ Ansible playbook executed successfully'
         }
         failure {
-            echo "❌ Ansible playbook failed"
-        }
-        always {
-            cleanWs()
+            echo '❌ Ansible playbook execution failed'
         }
     }
 }
