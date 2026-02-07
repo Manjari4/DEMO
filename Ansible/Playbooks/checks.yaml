@@ -1,27 +1,50 @@
 ---
+# Play to install, start and verify MySQL service
 - name: Install, start and check MySQL service
   hosts: all
-  become: yes
+  become: yes   # Run tasks with sudo/root privileges
 
   tasks:
+
+    # Install MySQL server package
+    # If MySQL is already installed, Ansible will report "ok"
     - name: Install MySQL
       package:
         name: mysql-server
         state: present
+      register: mysql_install_result
 
+    # Print message if MySQL was already installed or newly installed
+    - name: Print MySQL installation status
+      debug:
+        msg: >-
+          MySQL was {{
+            'installed now' if mysql_install_result.changed
+            else 'already installed'
+          }}
+
+    # Ensure MySQL service is running and enabled on boot
     - name: Ensure MySQL service is started and enabled
       service:
         name: mysql
         state: started
         enabled: yes
 
-    - name: Check MySQL service status
+    # Collect service-related facts from the target host
+    - name: Gather service facts
       service_facts:
 
+    # Print current MySQL service state
+    - name: Print MySQL service status
+      debug:
+        msg: "MySQL service state is: {{ ansible_facts.services['mysql.service'].state }}"
+
+    # Assert that MySQL service exists and is running
+    # Pipeline will FAIL if these conditions are not met
     - name: Assert MySQL service is running
       assert:
         that:
           - "'mysql.service' in ansible_facts.services"
           - ansible_facts.services['mysql.service'].state == 'running'
-        fail_msg: "MySQL service is NOT running."
-        success_msg: "MySQL service is running."
+        fail_msg: "❌ MySQL service is NOT running."
+        success_msg: "✅ MySQL service is running."
